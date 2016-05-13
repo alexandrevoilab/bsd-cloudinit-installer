@@ -73,6 +73,9 @@ FETCH="fetch ${VERIFY_PEER}"
 INSTALL_PKGS='
 	lang/python27
 	devel/py-virtualenv
+	devel/py-babel
+	devel/py-greenlet
+	net/py-netifaces
 	security/sudo
 	security/ca_root_nss
 	'
@@ -134,7 +137,7 @@ mkdir -p $BSDINIT_DIR
 $FETCH -o - $BSDINIT_URL | tar -xzf - -C $BSDINIT_DIR --strip-components 1 $TAR_VERBOSE
 echo 'Done'
 
-virtualenv $VENV_DIR
+virtualenv $VENV_DIR --system-site-packages
 . "$VENV_DIR/bin/activate"
 PYTHON="$VENV_DIR/bin/python"
 pip install --upgrade --force-reinstall pip
