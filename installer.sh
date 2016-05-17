@@ -55,8 +55,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 # files and dirs
 SSH_DIR='/etc/ssh'
-RC_SCRIPT_FILE='/etc/rc.local'
-RC_BACKUP_FILE='/etc/rc.local.bak'
+RC_SCRIPT_FILE='/usr/local/etc/rc.d/cloud-init.sh'
 LOADER_CONF='/boot/loader.conf'
 WORKING_DIR='/root'
 BSDINIT_DIR="$WORKING_DIR/bsd-cloudinit"
@@ -150,13 +149,12 @@ pip install -r "$BSDINIT_DIR/requirements.txt"
 rm -vf $SSH_DIR/ssh_host*
 
 touch $RC_SCRIPT_FILE
-cp -pf $RC_SCRIPT_FILE $RC_BACKUP_FILE
+chmod a+x $RC_SCRIPT_FILE
 echo_bsdinit_stamp >> $RC_SCRIPT_FILE
 echo "(
-    $PYTHON $BSDINIT_DIR/run.py --log-file /tmp/cloudinit.log $BSDINIT_SCRIPT_DEBUG_FLAG
-    cp -pf $RC_BACKUP_FILE $RC_SCRIPT_FILE
+    $PYTHON $BSDINIT_DIR/run.py --log-file /var/log/cloudinit.log $BSDINIT_SCRIPT_DEBUG_FLAG
     rm -r $BSDINIT_DIR
-    rm $RC_BACKUP_FILE
+    rm $RC_SCRIPT_FILE
 )" >> $RC_SCRIPT_FILE
 
 if [ $BSDINIT_DEBUG ]
