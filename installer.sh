@@ -63,7 +63,7 @@ BSDINIT_DIR="$WORKING_DIR/bsd-cloudinit"
 VENV_DIR="$BSDINIT_DIR/.venv"
 
 # bsd cloudinit
-BSDINIT_URL="https://api.github.com/repos/alexandrevoilab/bsd-cloudinit/tarball/$GIT_REF"
+BSDINIT_URL="https://api.github.com/repos/pallaeon/bsd-cloudinit/tarball/$GIT_REF"
 
 # commands
 VERIFY_PEER='--ca-cert=/usr/local/share/certs/ca-root-nss.crt'
@@ -177,11 +177,10 @@ fi
 
 # Re-run the initial wizard
 cp /conf.default/config.xml /cf/conf/config.xml
-rm /cf/conf/trigger_initial_wizard
+touch /cf/conf/trigger_initial_wizard
 
 # Cleanup
 rm -Rf /cf/conf/backup/
-rm /cf/conf/mtree.log
 
 # Allow %wheel to become root with no password
 sed -i '' 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /usr/local/etc/sudoers

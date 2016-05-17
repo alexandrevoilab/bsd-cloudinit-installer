@@ -11,8 +11,7 @@ This script will install bsd-cloudinit and configure the system, **after running
 Install
 =======
 
-    fetch https://github.com/alexandrevoilab/bsd-cloudinit-installer/raw/master/installer.sh
-    sh installer.sh
+    fetch https://github.com/alexandrevoilab/bsd-cloudinit-installer/raw/master/installer.sh -o - | sh
 
 
 Todo
