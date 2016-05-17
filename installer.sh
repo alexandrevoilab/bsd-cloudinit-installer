@@ -203,6 +203,22 @@ fi
 # Allow %wheel to become root with no password
 sed -i '' 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /usr/local/etc/sudoers
 
+cat > /etc/dhclient-exit-hooks <<EOF
+# This script fixes injection of the default route on OVH /cloud.
+# See dhclient-script(8) for more details.
+
+# Force-add a static route to our gateway (otherwise unreachable)
+# and re-declare it as the default route (as previous declaration failed)
+case "${reason}" in
+    "BOUND"|"RENEW"|"REBIND"|"REBOOT")
+        route add "${new_routers}" -iface "${interface}"
+        route add default "${new_routers}"
+        ;;
+    *)
+        ;;
+esac
+EOF
+
 # Readme - clean history
 echo '==================================================='
 echo 'If you want to clean the tcsh history, please issue'
