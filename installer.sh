@@ -57,14 +57,13 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 SSH_DIR='/etc/ssh'
 RC_SCRIPT_FILE='/etc/rc.local'
 RC_BACKUP_FILE='/etc/rc.local.bak'
-RC_CONF='/etc/rc.conf'
 LOADER_CONF='/boot/loader.conf'
 WORKING_DIR='/root'
 BSDINIT_DIR="$WORKING_DIR/bsd-cloudinit"
 VENV_DIR="$BSDINIT_DIR/.venv"
 
 # bsd cloudinit
-BSDINIT_URL="https://api.github.com/repos/pellaeon/bsd-cloudinit/tarball/$GIT_REF"
+BSDINIT_URL="https://api.github.com/repos/alexandrevoilab/bsd-cloudinit/tarball/$GIT_REF"
 
 # commands
 VERIFY_PEER='--ca-cert=/usr/local/share/certs/ca-root-nss.crt'
@@ -176,34 +175,18 @@ then
     sed -I '' '/^console/d' $LOADER_CONF
 fi
 
-echo_bsdinit_stamp >> $RC_CONF
-# Get the active NIC and set it to use dhcp
-for i in `ifconfig -u -l ether`
-do
-    case $i in
-        'lo0' | 'plip0' | 'pflog0')
-            ;;
-        *)
-            echo 'ifconfig_'${i}'="DHCP"' >> $RC_CONF
-            # Add vtnet0 as default
-            if [ $i != 'vtnet0' ]
-            then
-                echo 'ifconfig_vtnet0="DHCP"' >> $RC_CONF
-            fi
-            break;
-            ;;
-    esac
-done
-# Enabel sshd in rc.conf
-if ! /usr/bin/egrep '^sshd_enable' $RC_CONF > /dev/null
-then
-    echo 'sshd_enable="YES"' >> $RC_CONF
-fi
+# Re-run the initial wizard
+cp /conf.default/config.xml /cf/conf/config.xml
+rm /cf/conf/trigger_initial_wizard
+
+# Cleanup
+rm -Rf /cf/conf/backup/
+rm /cf/conf/mtree.log
 
 # Allow %wheel to become root with no password
 sed -i '' 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /usr/local/etc/sudoers
 
-cat > /etc/dhclient-exit-hooks <<EOF
+cat > /etc/dhclient-exit-hooks <<'EOF'
 # This script fixes injection of the default route on OVH /cloud.
 # See dhclient-script(8) for more details.
 
